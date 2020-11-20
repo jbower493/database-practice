@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>File</title>
+  </head>
+  <body>
+    <h1>Some File</h1>
+
+    <h3>Posts</h3>
+
+    <!--give the ul element an id of list, so we can select it by its id using javascript-->
+    <ul id="list"></ul>
+
+    <script>
+      // function to display the posts on the html page
+      const displayPosts = (json) => {
+        // parse the JSON response from the php file into a javascript array of objects
+        const postsArray = JSON.parse(json);
+        
+        // select the list element
+        const list = document.getElementById('list');
+
+        // loop through the array of post objects and render an <li> element to the page for each post
+        postsArray.forEach(post => {
+          const title = document.createElement('h4');
+          title.innerText = post.title;
+          const body = document.createElement('p');
+          body.innerText = post.body;
+          const listItem = document.createElement('li');
+          listItem.appendChild(title);
+          listItem.appendChild(body);
+          list.appendChild(listItem);
+        });
+      };
+
+      // asyncronous request to the php file on the server
+      const xhr = new XMLHttpRequest();
+
+      // listen for the request to complete (ie. when the ready state of the http request object changes)
+      xhr.onreadystatechange = () => {
+        // every time the ready state changes, check if it is done
+        if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+          // when the request response is received, call the display posts function passing the php file's response (JSON string) as an argument
+          const res = xhr.response;
+          displayPosts(res);
+        }
+      };
+      xhr.open('GET', 'http://localhost/database-practice/dbquery.php');
+      xhr.send();
+    </script>
+
+  </body>
+</html>
